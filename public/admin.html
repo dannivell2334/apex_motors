@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff Portal | Apex Motors</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 font-sans text-gray-800">
+
+  <nav class="bg-slate-950 text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-4 flex justify-between items-center">
+      <div class="flex items-center gap-2">
+        <span class="bg-amber-500 text-slate-900 px-2 py-1 rounded text-lg font-black">APEX</span>
+        <span class="font-semibold">Staff Portal</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <a id="siteLink" href="/" class="text-xs text-gray-300 hover:text-amber-400"><i class="fa-solid fa-globe mr-1"></i>View site</a>
+        <button id="logoutBtn" onclick="logout()" class="hidden text-xs text-gray-300 hover:text-red-400"><i class="fa-solid fa-right-from-bracket mr-1"></i>Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- LOGIN -->
+  <div id="loginBox" class="max-w-md mx-auto mt-24 px-4">
+    <div class="bg-white rounded-xl shadow-md border border-gray-100 p-8">
+      <h1 class="text-xl font-bold text-slate-900 mb-1">Staff Login</h1>
+      <p class="text-xs text-gray-500 mb-6">Enter the admin password to manage orders and products.</p>
+      <form onsubmit="return login(event)">
+        <input id="pw" type="password" placeholder="Admin password" class="w-full text-sm p-3 border border-gray-300 rounded-md mb-4 focus:outline-none focus:border-amber-500">
+        <p id="loginErr" class="hidden text-xs text-red-600 mb-3"></p>
+        <button class="w-full bg-slate-900 hover:bg-amber-500 hover:text-slate-950 text-white font-bold py-3 rounded-md transition">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="panel" class="hidden max-w-7xl mx-auto px-4 sm:px-8 py-10">
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+      <div class="flex gap-3">
+        <button id="tabOrders" onclick="showTab('orders')" class="px-4 py-2 text-sm font-bold rounded-md transition bg-slate-900 text-white">Orders</button>
+        <button id="tabProducts" onclick="showTab('products')" class="px-4 py-2 text-sm font-bold rounded-md transition bg-white text-slate-700 border border-gray-200 hover:border-amber-400">Products</button>
+      </div>
+      <div class="text-xs text-gray-500">New: <span id="counter" class="font-bold text-amber-600">0</span> pending quotations</div>
+    </div>
+
+    <div id="ordersView">
+      <div id="stats" class="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8"></div>
+      <div id="table" class="bg-white rounded-xl shadow-md border border-gray-100 overflow-x-auto"></div>
+    </div>
+
+    <div id="productsView" class="hidden">
+      <div class="flex flex-wrap items-center justify-between mb-4 gap-3">
+        <p class="text-sm text-gray-500">The live catalog shops display. Prices in NGN; leave a vehicle price blank for &ldquo;Price on request&rdquo;.</p>
+        <div class="flex gap-2">
+          <button onclick="openProduct('vehicle')" class="text-xs bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2 rounded-md transition"><i class="fa-solid fa-plus mr-1"></i>Add Vehicle</button>
+          <button onclick="openProduct('parts')" class="text-xs bg-slate-900 hover:bg-slate-700 text-white font-bold px-4 py-2 rounded-md transition"><i class="fa-solid fa-plus mr-1"></i>Add Part</button>
+        </div>
+      </div>
+      <p id="catalogMsg" class="hidden mb-3 text-xs p-3 rounded-md"></p>
+      <div id="catalog" class="bg-white rounded-xl shadow-md border border-gray-100 overflow-x-auto"></div>
+    </div>
+  </div>
+
+  <!-- CHARGE MODAL -->
+  <div id="chargeModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm">
+      <h3 class="font-bold text-slate-900 mb-1">Confirm & Charge Order</h3>
+      <p class="text-xs text-gray-500 mb-4">Set the final prices. A Paystack payment link will be generated for this order.</p>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Unit Price (NGN)</label>
+          <input id="chUnit" type="number" min="0" class="w-full text-sm p-3 border border-gray-300 rounded-md">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Delivery Fee (NGN)</label>
+          <input id="chDelivery" type="number" min="0" class="w-full text-sm p-3 border border-gray-300 rounded-md">
+        </div>
+      </div>
+      <div class="flex gap-3 mt-5">
+        <button onclick="doCharge()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold py-3 rounded-md transition">Generate Payment Link</button>
+        <button onclick="closeCharge()" class="px-4 text-xs font-bold text-gray-500 hover:text-gray-800">Cancel</button>
+      </div>
+      <p id="chargeResult" class="hidden mt-3 text-xs p-3 rounded-md break-all"></p>
+    </div>
+  </div>
+
+  <!-- PRODUCT MODAL -->
+  <div id="productModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <h3 id="pmTitle" class="font-bold text-slate-900 mb-1">Add Vehicle</h3>
+      <p class="text-xs text-gray-500 mb-4">Saved to the live catalog immediately.</p>
+      <input type="hidden" id="pmId">
+      <input type="hidden" id="pmKind">
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Name *</label>
+          <input id="pmName" class="w-full text-sm p-3 border border-gray-300 rounded-md">
+        </div>
+        <div id="pmVehicleFields" class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Category</label>
+            <input id="pmCategory" placeholder="Vehicle" class="w-full text-sm p-3 border border-gray-300 rounded-md">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Price (NGN)</label>
+            <input id="pmPrice" type="number" min="0" placeholder="0 = price on request" class="w-full text-sm p-3 border border-gray-300 rounded-md">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Price note</label>
+            <input id="pmPriceNote" placeholder="e.g. Base price" class="w-full text-sm p-3 border border-gray-300 rounded-md">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Image file (in /images)</label>
+            <input id="pmImg" placeholder="e.g. my-bike.jpg" class="w-full text-sm p-3 border border-gray-300 rounded-md">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Icon (FontAwesome)</label>
+            <input id="pmIcon" placeholder="fa-motorcycle" class="w-full text-sm p-3 border border-gray-300 rounded-md">
+          </div>
+          <div class="col-span-2">
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Tagline</label>
+            <input id="pmTagline" placeholder="Short sales pitch" class="w-full text-sm p-3 border border-gray-300 rounded-md">
+          </div>
+          <div class="col-span-2">
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Features (comma separated)</label>
+            <input id="pmFeatures" placeholder="125cc engine, LED headlight, Boot storage" class="w-full text-sm p-3 border border-gray-300 rounded-md">
+          </div>
+        </div>
+        <div id="pmPartsFields" class="hidden grid gap-3">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Note</label>
+            <input id="pmNote" placeholder="In stock" class="w-full text-sm p-3 border border-gray-300 rounded-md">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Image file (in /images)</label>
+            <input id="pmImgP" placeholder="e.g. my-part.jpg" class="w-full text-sm p-3 border border-gray-300 rounded-md">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Icon (FontAwesome)</label>
+            <input id="pmIconP" placeholder="fa-gear" class="w-full text-sm p-3 border border-gray-300 rounded-md">
+          </div>
+        </div>
+      </div>
+      <div class="flex gap-3 mt-5">
+        <button onclick="saveProduct()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold py-3 rounded-md transition">Save Product</button>
+        <button onclick="closeProduct()" class="px-4 text-xs font-bold text-gray-500 hover:text-gray-800">Cancel</button>
+      </div>
+      <p id="pmResult" class="hidden mt-3 text-xs p-3 rounded-md"></p>
+    </div>
+  </div>
+
+  <script>
+    const STATUS = { 'quote': 'Quote', 'awaiting_payment': 'Awaiting Payment', 'paid': 'Paid', 'dispatched': 'Dispatched', 'delivered': 'Delivered', 'cancelled': 'Cancelled' };
+    const STATUS_COLORS = {
+      'quote': 'bg-amber-100 text-amber-800', 'awaiting_payment': 'bg-orange-100 text-orange-800',
+      'paid': 'bg-green-100 text-green-800', 'dispatched': 'bg-blue-100 text-blue-800',
+      'delivered': 'bg-emerald-100 text-emerald-800', 'cancelled': 'bg-red-100 text-red-800'
+    };
+    let orders = [];
+    const fmt = n => n; // naira strings already formatted server-side
+    let lastQuoteCount = -1;
+
+    function normPhone(p) {
+      p = String(p || '').replace(/\D/g, '');
+      return p.startsWith('0') ? '234' + p.slice(1) : p;
+    }
+    function waUrl(o) {
+      return 'https://wa.me/' + normPhone(o.customer.phone) + '?text=' + encodeURIComponent('Hi ' + o.customer.name + ', regarding your Apex Motors request for ' + o.itemName + ' (' + o.ref + ').');
+    }
+    function telUrl(o) { return 'tel:' + (o.customer.phone || ''); }
+    function beep() {
+      try {
+        const a = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = a.createOscillator(), g = a.createGain();
+        osc.connect(g); g.connect(a.destination);
+        osc.frequency.value = 880;
+        g.gain.setValueAtTime(0.15, a.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, a.currentTime + 0.5);
+        osc.start(); osc.stop(a.currentTime + 0.5);
+      } catch (e) { /* audio blocked - ignore */ }
+    }
+
+    async function init() {
+      try {
+        const me = await fetch('/api/admin/me');
+        if (me.ok) { showPanel(); } else { showLogin(); }
+      } catch (e) { showLogin(); }
+    }
+
+    function showLogin() {
+      document.getElementById('loginBox').classList.remove('hidden');
+      document.getElementById('panel').classList.add('hidden');
+      document.getElementById('logoutBtn').classList.add('hidden');
+    }
+
+    function showPanel() {
+      document.getElementById('loginBox').classList.add('hidden');
+      document.getElementById('panel').classList.remove('hidden');
+      document.getElementById('logoutBtn').classList.remove('hidden');
+      loadOrders();
+      setInterval(loadOrders, 15000);
+    }
+
+    async function login(e) {
+      e.preventDefault();
+      document.getElementById('loginErr').classList.add('hidden');
+      const res = await fetch('/api/admin/login', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: document.getElementById('pw').value })
+      });
+      if (res.ok) showPanel();
+      else {
+        document.getElementById('loginErr').textContent = 'Wrong password.';
+        document.getElementById('loginErr').classList.remove('hidden');
+      }
+      return false;
+    }
+
+    async function logout() {
+      await fetch('/api/admin/logout', { method: 'POST' });
+      showLogin();
+    }
+
+    async function loadOrders() {
+      const res = await fetch('/api/admin/orders');
+      orders = await res.json();
+      const counts = {};
+      orders.forEach(o => counts[o.status] = (counts[o.status] || 0) + 1);
+      document.getElementById('counter').textContent = counts['quote'] || 0;
+      const qc = counts['quote'] || 0;
+      if (lastQuoteCount >= 0 && qc > lastQuoteCount) {
+        beep();
+        const c = document.getElementById('counter');
+        c.classList.remove('text-amber-600');
+        c.classList.add('text-red-600', 'animate-bounce');
+        setTimeout(() => { c.classList.add('text-amber-600'); c.classList.remove('text-red-600', 'animate-bounce'); }, 3000);
+      }
+      lastQuoteCount = qc;
+      document.getElementById('stats').innerHTML = Object.keys(STATUS).map(s =>
+        `<div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 text-center">
+           <p class="text-2xl font-black ${s === 'quote' ? 'text-amber-500' : 'text-slate-900'}">${counts[s] || 0}</p>
+           <p class="text-xs text-gray-500 uppercase">${STATUS[s]}</p>
+         </div>`).join('');
+      document.getElementById('table').innerHTML = `
+        <table class="w-full text-sm">
+          <thead class="bg-slate-50 text-left text-xs text-gray-500 uppercase">
+            <tr><th class="p-3">Ref</th><th class="p-3">Item</th><th class="p-3">Customer</th><th class="p-3">Total</th><th class="p-3">Status</th><th class="p-3">Actions</th></tr>
+          </thead>
+          <tbody>${orders.map(o => `
+            <tr class="border-t border-gray-100">
+              <td class="p-3 font-mono text-xs">${o.ref}</td>
+              <td class="p-3"><p class="font-bold text-slate-900">${o.itemName}</p><p class="text-xs text-gray-400">${o.kind} &times;${o.qty}</p></td>
+              <td class="p-3"><p class="font-bold">${o.customer.name}</p><p class="text-xs text-gray-500">${o.customer.phone}${o.customer.email ? '<br>' + o.customer.email : ''}</p><span class="inline-flex gap-2 mt-1.5"><a title="WhatsApp customer" target="_blank" rel="noopener" href="${waUrl(o)}" class="text-green-600 hover:text-green-800"><i class="fa-brands fa-whatsapp"></i></a><a title="Call customer" href="${telUrl(o)}" class="text-slate-500 hover:text-slate-800"><i class="fa-solid fa-phone"></i></a></span></td>
+              <td class="p-3 font-bold">${o.total}</td>
+              <td class="p-3"><span class="text-xs font-bold px-2 py-1 rounded-full ${STATUS_COLORS[o.status]}">${STATUS[o.status]}</span></td>
+              <td class="p-3">
+                <div class="flex flex-wrap gap-2">
+                  <button onclick="charge(${o.id})" class="text-xs bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3 py-1.5 rounded transition">Charge</button>
+                  <button onclick="setStatus(${o.id},'paid')" class="text-xs bg-green-500 hover:bg-green-400 text-white font-bold px-3 py-1.5 rounded transition">Paid</button>
+                  <button onclick="setStatus(${o.id},'dispatched')" class="text-xs bg-blue-500 hover:bg-blue-400 text-white font-bold px-3 py-1.5 rounded transition">Dispatch</button>
+                  <button onclick="setStatus(${o.id},'delivered')" class="text-xs bg-emerald-500 hover:bg-emerald-400 text-white font-bold px-3 py-1.5 rounded transition">Deliver</button>
+                  <button onclick="setStatus(${o.id},'cancelled')" class="text-xs bg-red-500 hover:bg-red-400 text-white font-bold px-3 py-1.5 rounded transition">Cancel</button>
+                </div>
+              </td>
+            </tr>`).join('')}
+          </tbody>
+        </table>`;
+    }
+
+    async function setStatus(id, status) {
+      await fetch('/api/admin/orders/' + id + '/status', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status })
+      });
+      loadOrders();
+    }
+
+    let chargeId = null;
+    function charge(id) {
+      const o = orders.find(x => x.id === id);
+      chargeId = id;
+      document.getElementById('chUnit').value = o.kind === 'vehicle' ? parseFloat(o.unitPrice.replace(/[^0-9]/g, '')) / 100 : 0;
+      document.getElementById('chDelivery').value = parseFloat(o.deliveryFee.replace(/[^0-9]/g, '')) / 100;
+      document.getElementById('chargeResult').classList.add('hidden');
+      document.getElementById('chargeModal').classList.remove('hidden');
+    }
+    function closeCharge() { document.getElementById('chargeModal').classList.add('hidden'); }
+
+    async function doCharge() {
+      const unitPrice = Number(document.getElementById('chUnit').value || 0);
+      const deliveryFee = Number(document.getElementById('chDelivery').value || 0);
+      const box = document.getElementById('chargeResult');
+      box.classList.remove('hidden');
+      try {
+        const res = await fetch('/api/admin/orders/' + chargeId + '/charge', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ unitPrice, deliveryFee })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        box.className = 'mt-3 text-xs p-3 rounded-md bg-green-50 text-green-700 border border-green-200 break-all';
+        box.innerHTML = 'Payment link ready:<br><a class="underline text-green-700" target="_blank" href="' + data.authorization_url + '">' + data.authorization_url + '</a><br><span class="font-bold">' + data.total + '</span> - send this to the customer (WhatsApp/email).';
+        loadOrders();
+      } catch (err) {
+        box.className = 'mt-3 text-xs p-3 rounded-md bg-red-50 text-red-700 border border-red-200 break-all';
+        box.textContent = err.message;
+      }
+    }
+
+    let catalog = { vehicles: [], parts: [] };
+    let editingProductId = null;
+
+    function showTab(name) {
+      const orders = name === 'orders';
+      document.getElementById('ordersView').classList.toggle('hidden', !orders);
+      document.getElementById('productsView').classList.toggle('hidden', orders);
+      const on = 'px-4 py-2 text-sm font-bold rounded-md transition bg-slate-900 text-white';
+      const off = 'px-4 py-2 text-sm font-bold rounded-md transition bg-white text-slate-700 border border-gray-200 hover:border-amber-400';
+      document.getElementById('tabOrders').className = orders ? on : off;
+      document.getElementById('tabProducts').className = orders ? off : on;
+      if (!orders) loadCatalog();
+    }
+
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+
+    function catalogMsg(type, text) {
+      const m = document.getElementById('catalogMsg');
+      m.className = 'mb-3 text-xs p-3 rounded-md ' + (type === 'ok' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200');
+      m.innerHTML = esc(text);
+      m.classList.remove('hidden');
+    }
+
+    async function loadCatalog() {
+      const res = await fetch('/api/products');
+      if (!res.ok) { catalogMsg('err', 'Could not load catalog.'); return; }
+      catalog = await res.json();
+      document.getElementById('catalogMsg').classList.add('hidden');
+      renderCatalog();
+    }
+
+    function renderCatalog() {
+      const rows = catalog.vehicles.map(v => ({ kind: 'vehicle', item: v })).concat(catalog.parts.map(p => ({ kind: 'parts', item: p })));
+      if (!rows.length) {
+        document.getElementById('catalog').innerHTML = '<p class="p-6 text-sm text-gray-500">No products yet. Add your first vehicle or part.</p>';
+        return;
+      }
+      document.getElementById('catalog').innerHTML = `
+        <table class="w-full text-sm">
+          <thead class="bg-slate-50 text-left text-xs text-gray-500 uppercase">
+            <tr><th class="p-3">Product</th><th class="p-3">Type</th><th class="p-3">Price</th><th class="p-3">Image</th><th class="p-3">Actions</th></tr>
+          </thead>
+          <tbody>${rows.map(r => `
+            <tr class="border-t border-gray-100">
+              <td class="p-3"><p class="font-bold text-slate-900">${esc(r.item.name)}</p><p class="text-xs text-gray-400">${r.kind === 'vehicle' ? esc(r.item.category || 'Vehicle') + (r.item.tagline ? ' &middot; ' + esc(r.item.tagline) : '') : esc(r.item.note || '')}</p></td>
+              <td class="p-3"><span class="text-xs font-bold px-2 py-1 rounded-full ${r.kind === 'vehicle' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-700'}">${r.kind === 'vehicle' ? 'Vehicle' : 'Part'}</span></td>
+              <td class="p-3 font-bold">${r.kind === 'vehicle' ? (r.item.price > 0 ? '&#8358;' + Number(r.item.price).toLocaleString('en-NG') : '<span class="text-gray-400">Price on request</span>') : '-'}</td>
+              <td class="p-3 text-xs text-gray-500">${esc(r.item.img || '-')}</td>
+              <td class="p-3">
+                <div class="flex gap-2">
+                  <button onclick="editProduct('${r.kind}','${esc(r.item.id)}')" class="text-xs bg-slate-900 hover:bg-slate-700 text-white font-bold px-3 py-1.5 rounded transition">Edit</button>
+                  <button onclick="deleteProduct('${esc(r.item.id)}','${esc(r.item.name)}')" class="text-xs bg-red-500 hover:bg-red-400 text-white font-bold px-3 py-1.5 rounded transition">Delete</button>
+                </div>
+              </td>
+            </tr>`).join('')}
+          </tbody>
+        </table>`;
+    }
+
+    function openProduct(kind) {
+      editingProductId = null;
+      document.getElementById('pmKind').value = kind;
+      document.getElementById('pmTitle').textContent = kind === 'vehicle' ? 'Add Vehicle' : 'Add Part';
+      document.getElementById('pmVehicleFields').classList.toggle('hidden', kind !== 'vehicle');
+      document.getElementById('pmPartsFields').classList.toggle('hidden', kind !== 'parts');
+      ['pmName', 'pmCategory', 'pmPrice', 'pmPriceNote', 'pmImg', 'pmIcon', 'pmTagline', 'pmFeatures', 'pmNote', 'pmImgP', 'pmIconP'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('pmResult').classList.add('hidden');
+      document.getElementById('productModal').classList.remove('hidden');
+    }
+
+    function editProduct(kind, id) {
+      const item = (kind === 'vehicle' ? catalog.vehicles : catalog.parts).find(x => x.id === id);
+      if (!item) return;
+      editingProductId = id;
+      document.getElementById('pmKind').value = kind;
+      document.getElementById('pmTitle').textContent = 'Edit ' + (kind === 'vehicle' ? 'Vehicle' : 'Part') + ': ' + item.name;
+      document.getElementById('pmVehicleFields').classList.toggle('hidden', kind !== 'vehicle');
+      document.getElementById('pmPartsFields').classList.toggle('hidden', kind !== 'parts');
+      document.getElementById('pmName').value = item.name || '';
+      if (kind === 'vehicle') {
+        document.getElementById('pmCategory').value = item.category || '';
+        document.getElementById('pmPrice').value = item.price > 0 ? item.price : '';
+        document.getElementById('pmPriceNote').value = item.priceNote && item.priceNote !== 'Price on request' ? item.priceNote : '';
+        document.getElementById('pmImg').value = item.img || '';
+        document.getElementById('pmIcon').value = item.icon || '';
+        document.getElementById('pmTagline').value = item.tagline || '';
+        document.getElementById('pmFeatures').value = (item.features || []).join(', ');
+      } else {
+        document.getElementById('pmNote').value = item.note || '';
+        document.getElementById('pmImgP').value = item.img || '';
+        document.getElementById('pmIconP').value = item.icon || '';
+      }
+      document.getElementById('pmResult').classList.add('hidden');
+      document.getElementById('productModal').classList.remove('hidden');
+    }
+
+    function closeProduct() { document.getElementById('productModal').classList.add('hidden'); }
+
+    async function saveProduct() {
+      const kind = document.getElementById('pmKind').value;
+      const body = { name: document.getElementById('pmName').value };
+      if (!body.name) {
+        document.getElementById('pmResult').className = 'mt-3 text-xs p-3 rounded-md bg-red-50 text-red-700 border border-red-200';
+        document.getElementById('pmResult').textContent = 'Name is required.';
+        document.getElementById('pmResult').classList.remove('hidden');
+        return;
+      }
+      if (kind === 'vehicle') {
+        body.category = document.getElementById('pmCategory').value;
+        body.price = Number(document.getElementById('pmPrice').value || 0);
+        body.priceNote = document.getElementById('pmPriceNote').value;
+        body.img = document.getElementById('pmImg').value;
+        body.icon = document.getElementById('pmIcon').value;
+        body.tagline = document.getElementById('pmTagline').value;
+        body.features = document.getElementById('pmFeatures').value.split(',').map(s => s.trim()).filter(Boolean);
+      } else {
+        body.note = document.getElementById('pmNote').value;
+        body.img = document.getElementById('pmImgP').value;
+        body.icon = document.getElementById('pmIconP').value;
+      }
+      const url = editingProductId ? '/api/admin/products/' + editingProductId : '/api/admin/products';
+      const method = editingProductId ? 'PUT' : 'POST';
+      const box = document.getElementById('pmResult');
+      box.classList.remove('hidden');
+      try {
+        const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        box.className = 'mt-3 text-xs p-3 rounded-md bg-green-50 text-green-700 border border-green-200';
+        box.textContent = 'Saved. The site catalog updates immediately.';
+        closeProduct();
+        loadCatalog();
+      } catch (err) {
+        box.className = 'mt-3 text-xs p-3 rounded-md bg-red-50 text-red-700 border border-red-200';
+        box.textContent = err.message;
+      }
+    }
+
+    async function deleteProduct(id, name) {
+      if (!confirm('Delete "' + name + '" from the catalog?')) return;
+      try {
+        const res = await fetch('/api/admin/products/' + id, { method: 'DELETE' });
+        if (!res.ok) throw new Error('Delete failed');
+        catalogMsg('ok', 'Product deleted.');
+        loadCatalog();
+      } catch (err) { catalogMsg('err', err.message); }
+    }
+
+    init();
+  </script>
+</body>
+</html>

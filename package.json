@@ -1,0 +1,16 @@
+{
+  "name": "apex-motors-portal",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Apex Motors - procurement & payment portal (Paystack)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.2.0",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.2.0",
+    "express": "^4.21.2"
+  }
+}

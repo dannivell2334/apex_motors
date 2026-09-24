@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TVS Vehicles | Apex Motors</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+
+  <div class="bg-slate-900 text-gray-300 text-xs py-2 px-4 sm:px-8 flex justify-between items-center border-b border-slate-800">
+    <p class="flex items-center gap-2"><i class="fa-solid fa-shield-halved text-amber-400"></i><span>Independent Procurement & Delivery Service across Nigeria</span></p>
+    <div class="flex gap-4">
+      <a href="tel:+2348027351866" class="hover:text-amber-400"><i class="fa-solid fa-phone mr-1"></i> 0802 735 1866</a>
+      <a href="checkout.html" class="hover:text-amber-400"><i class="fa-solid fa-envelope mr-1"></i> Order Now</a>
+    </div>
+  </div>
+
+  <nav class="bg-white sticky top-0 z-50 shadow-sm border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-4 flex justify-between items-center">
+      <a href="/" class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+        <span class="bg-amber-500 text-slate-900 px-2 py-1 rounded text-lg">APEX</span> MOTORS
+      </a>
+      <div class="hidden md:flex space-x-8 text-sm font-semibold text-gray-700">
+        <a href="vehicles.html" class="text-amber-600">TVS Vehicles</a>
+        <a href="parts.html" class="hover:text-amber-600">Spare Parts</a>
+        <a href="order.html" class="hover:text-amber-600">Track Order</a>
+        <a href="dashboard.html" class="hover:text-amber-600">My Orders</a>
+      </div>
+      <a href="checkout.html" class="bg-slate-900 hover:bg-amber-500 hover:text-slate-900 text-white text-xs uppercase tracking-wider font-bold py-3 px-5 rounded-md transition shadow-md">Order / Inquire</a>
+    </div>
+  </nav>
+
+  <section class="py-16 max-w-7xl mx-auto px-4 sm:px-8">
+    <div class="text-center max-w-3xl mx-auto mb-14">
+      <h1 class="text-3xl font-black text-slate-900 mb-4">TVS Commercial Vehicles</h1>
+      <p class="text-gray-600 text-sm sm:text-base">Original brand-new units procured directly through official channels. Includes original documentation, chassis registration papers, and manufacturer warranty coverage.</p>
+    </div>
+    <div id="cards" class="grid md:grid-cols-2 lg:grid-cols-2 gap-8"></div>
+  </section>
+
+  <footer class="bg-slate-950 text-gray-400 py-12 text-xs mt-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <p>&copy; 2026 Apex Motors Procurement Ltd. All rights reserved.</p>
+      <div class="flex space-x-6">
+        <a href="order.html" class="hover:text-amber-400">Track Order</a>
+        <a href="dashboard.html" class="hover:text-amber-400">My Orders</a>
+        <a href="admin.html" class="hover:text-amber-400">Staff Portal</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="data/products.js"></script>
+  <script>
+    function formatNaira(n) { return '\u20A6' + n.toLocaleString('en-NG', { minimumFractionDigits: 0 }); }
+    function visual(v) {
+      return `onerror="this.parentNode.innerHTML='<i class=&quot;fa-solid ${v.icon} text-6xl text-amber-500&quot;></i>'" src="${v.img}" alt="${v.name}" class="w-full h-full object-cover">`;
+    }
+    document.getElementById('cards').innerHTML = APEX_PRODUCTS.vehicles.map(v => `
+      <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex">
+        <div class="w-1/3 bg-slate-100 flex items-center justify-center p-0 overflow-hidden">
+          <img ${visual(v)}/>
+        </div>
+        <div class="p-6 flex-1">
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="text-lg font-bold text-slate-900">${v.name}</h3>
+            <span class="text-xs bg-amber-100 text-amber-800 font-bold px-2 py-1 rounded">${v.category}</span>
+          </div>
+          <p class="text-xs text-gray-500 mb-4">${v.tagline}</p>
+          <ul class="text-xs text-gray-600 space-y-2 mb-5">
+            ${v.features.map(f => `<li><i class="fa-solid fa-check text-amber-500 mr-2"></i>${f}</li>`).join('')}
+          </ul>
+          <div class="flex items-center justify-between">
+            <p class="text-lg font-black text-slate-900">${formatNaira(v.price)} <span class="text-xs font-normal text-gray-500">(${v.priceNote})</span></p>
+            <a href="checkout.html?kind=vehicle&id=${v.id}" class="bg-slate-900 hover:bg-amber-500 hover:text-slate-950 text-white text-xs font-bold py-3 px-6 rounded transition">Order This Unit</a>
+          </div>
+        </div>
+      </div>`).join('');
+  </script>
+  <script src="js/trust-bike.js"></script>
+</body>
+</html>

@@ -1,0 +1,215 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout | Apex Motors</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+
+  <div class="bg-slate-900 text-gray-300 text-xs py-2 px-4 sm:px-8 flex justify-between items-center border-b border-slate-800">
+    <p class="flex items-center gap-2"><i class="fa-solid fa-shield-halved text-amber-400"></i><span>Secure payment powered by Paystack</span></p>
+    <a href="/" class="hover:text-amber-400"><i class="fa-solid fa-arrow-left mr-1"></i> Back to site</a>
+  </div>
+
+  <nav class="bg-white sticky top-0 z-50 shadow-sm border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-4 flex justify-between items-center">
+      <a href="/" class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+        <span class="bg-amber-500 text-slate-900 px-2 py-1 rounded text-lg">APEX</span> MOTORS
+      </a>
+      <div class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Secure Checkout</div>
+    </div>
+  </nav>
+
+  <section class="py-16 max-w-4xl mx-auto px-4 sm:px-8">
+    <div id="msg" class="hidden mb-4 text-sm p-4 rounded-md"></div>
+    <div class="grid md:grid-cols-5 gap-8">
+      <form id="checkoutForm" class="md:col-span-3 space-y-4 bg-white p-6 rounded-xl shadow-md border border-gray-100" onsubmit="return placeOrder(event)">
+        <h2 class="text-xl font-bold text-slate-900 mb-2">Your Details</h2>
+        <div>
+          <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Full Name *</label>
+          <input id="cName" type="text" required class="w-full text-sm p-3 border border-gray-300 rounded-md focus:outline-none focus:border-amber-500">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Phone / WhatsApp *</label>
+            <input id="cPhone" type="tel" required class="w-full text-sm p-3 border border-gray-300 rounded-md focus:outline-none focus:border-amber-500">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Email *</label>
+            <input id="cEmail" type="email" required placeholder="for receipt" class="w-full text-sm p-3 border border-gray-300 rounded-md focus:outline-none focus:border-amber-500">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Delivery State *</label>
+            <input id="cState" type="text" required placeholder="e.g. Delta State" class="w-full text-sm p-3 border border-gray-300 rounded-md focus:outline-none focus:border-amber-500">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Delivery City / Address</label>
+            <input id="cAddress" type="text" placeholder="optional" class="w-full text-sm p-3 border border-gray-300 rounded-md focus:outline-none focus:border-amber-500">
+          </div>
+        </div>
+        <div id="noteBox" class="hidden text-xs text-gray-600 bg-amber-50 border border-amber-200 rounded-md p-3"></div>
+        <textarea id="cNotes" rows="2" placeholder="Notes: exact part name/code, quantity needed, or any special request..." class="w-full text-sm p-3 border border-gray-300 rounded-md focus:outline-none focus:border-amber-500"></textarea>
+        <button id="payBtn" type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3.5 rounded-md transition shadow-md">
+          Continue to Payment
+        </button>
+      </form>
+
+      <aside class="md:col-span-2">
+        <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+          <h3 class="font-bold text-slate-900 mb-4">Order Summary</h3>
+          <div class="flex justify-between items-center mb-4">
+            <div>
+              <p id="itemName" class="font-bold text-sm text-slate-900">-</p>
+              <p id="itemCat" class="text-xs text-gray-500">-</p>
+            </div>
+            <p id="itemPrice" class="font-black text-lg text-slate-900">-</p>
+          </div>
+          <div class="border-t border-gray-100 pt-3 space-y-3 text-xs">
+            <div class="flex justify-between items-center">
+              <span class="text-gray-500">Quantity</span>
+              <select id="cQty" class="border border-gray-300 rounded p-1">
+                <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+                <option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
+              </select>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-500">Est. Delivery Fee</span>
+              <input id="cDelivery" type="number" value="50000" min="0" step="1000" class="w-28 text-right border border-gray-300 rounded p-1">
+            </div>
+            <p id="deliveryNote" class="text-gray-400">Final delivery cost confirmed by our team.</p>
+            <div class="flex justify-between items-center pt-3 border-t border-gray-100">
+              <span class="font-bold text-gray-700">Total</span>
+              <span id="totalDisplay" class="font-black text-xl text-slate-900">-</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <footer class="bg-slate-950 text-gray-400 py-12 text-xs mt-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 text-center">
+      <p>Payments processed securely by Paystack. All trademarks remain property of their owners. &copy; 2026 Apex Motors Procurement Ltd.</p>
+    </div>
+  </footer>
+
+  <script src="data/products.js"></script>
+  <script>
+    const q = new URLSearchParams(location.search);
+    const kind = q.get('kind') || 'vehicle';
+    const id = q.get('id');
+    let product = null;
+    if (kind === 'vehicle') product = APEX_PRODUCTS.vehicles.find(v => v.id === id);
+    if (kind === 'parts' && id) product = APEX_PRODUCTS.parts.find(p => p.id === id);
+
+    const fmt = n => '\u20A6' + n.toLocaleString('en-NG', { minimumFractionDigits: 0 });
+
+    const basePrice = product && kind === 'vehicle' ? product.price : 0;
+    const isQuote = kind === 'parts' || basePrice <= 0;
+
+    let SHOP_WHATSAPP = '';
+    fetch('/api/config').then(r => r.json()).then(c => { SHOP_WHATSAPP = c.shopWhatsapp || ''; }).catch(() => {});
+
+    function waNotifyUrl(extra) {
+      if (!SHOP_WHATSAPP) return '';
+      return 'https://wa.me/' + SHOP_WHATSAPP + '?text=' + encodeURIComponent(extra);
+    }
+
+    if (product) {
+      document.getElementById('itemName').textContent = product.name;
+      document.getElementById('itemCat').textContent = kind === 'vehicle' ? product.category + ' (vehicle)' : product.note;
+      document.getElementById('itemPrice').textContent = kind === 'vehicle' && product.price > 0 ? fmt(product.price) : (product.priceNote || 'TBD');
+      if (isQuote) {
+        const nb = document.getElementById('noteBox');
+        nb.textContent = kind === 'parts'
+          ? 'Spare part pricing depends on the exact part and quantity. We will confirm the total via WhatsApp before you complete payment - no upfront charge.'
+          : 'Pricing and availability for this unit are confirmed by our team via WhatsApp before any payment. No upfront charge.';
+        nb.classList.remove('hidden');
+        document.getElementById('cDelivery').value = '0';
+        document.getElementById('cDelivery').disabled = true;
+        document.getElementById('payBtn').textContent = 'Submit Quote Request';
+      }
+    } else {
+      document.getElementById('itemName').textContent = 'Custom request';
+      document.getElementById('itemCat').textContent = kind === 'parts' ? 'Bulk spare parts' : 'Vehicle inquiry';
+    }
+
+    function recalc() {
+      const qty = Number(document.getElementById('cQty').value);
+      const del = Number(document.getElementById('cDelivery').value || 0);
+      document.getElementById('totalDisplay').textContent = fmt(basePrice * qty + del);
+    }
+    document.getElementById('cQty').addEventListener('change', recalc);
+    document.getElementById('cDelivery').addEventListener('change', recalc);
+    recalc();
+
+    function showMsg(text, ok) {
+      const m = document.getElementById('msg');
+      m.className = 'mb-4 text-sm p-4 rounded-md ' + (ok ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200');
+      m.innerHTML = text;
+      m.classList.remove('hidden');
+    }
+
+    async function placeOrder(e) {
+      e.preventDefault();
+      const btn = document.getElementById('payBtn');
+      btn.disabled = true; btn.textContent = 'Creating order...';
+      const body = {
+        customer: {
+          name: document.getElementById('cName').value,
+          phone: document.getElementById('cPhone').value,
+          email: document.getElementById('cEmail').value,
+          state: document.getElementById('cState').value,
+          address: document.getElementById('cAddress').value,
+          notes: document.getElementById('cNotes').value
+        },
+        item: {
+          kind,
+          name: product ? product.name : ((kind === 'parts' ? 'Bulk Spare Parts' : 'Custom Vehicle Inquiry')),
+          qty: Number(document.getElementById('cQty').value)
+        },
+        unitPrice: basePrice,
+        deliveryFee: Number(document.getElementById('cDelivery').value || 0)
+      };
+      try {
+        const res = await fetch('/api/orders', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Order failed');
+        if (data.authorization_url) {
+          window.location.href = data.authorization_url;
+        } else {
+          const ref = data.ref;
+          const cust = body.customer;
+          const lines = [
+            'New part/quote request from the Apex Motors site',
+            'Order ref: ' + ref,
+            'Item: ' + body.item.name + ' (qty ' + body.item.qty + ')',
+            'Customer: ' + cust.name,
+            'Phone/WhatsApp: ' + cust.phone,
+            'Email: ' + cust.email,
+            'Location: ' + cust.state + (cust.address ? ', ' + cust.address : ''),
+            cust.notes ? 'Notes: ' + cust.notes : '',
+            'Reply with the confirmed price to complete this order.'
+          ].filter(Boolean).join('\n');
+          const wa = waNotifyUrl(lines);
+          showMsg('Request received. Ref: <b>' + ref + '</b> - we will confirm your price shortly.' + (wa ? ' <a class="font-bold underline" target="_blank" href="' + wa + '">Notify us on WhatsApp now</a>' : ''), true);
+          btn.innerHTML = 'Submitted <i class="fa-solid fa-circle-check ml-1"></i>';
+          if (wa) window.open(wa, '_blank');
+        }
+      } catch (err) {
+        showMsg('<b>' + String(err.message).replace(/[<>&]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c])) + '</b>', false);
+        btn.disabled = false; btn.textContent = 'Continue to Payment';
+      }
+      return false;
+    }
+  </script>
+  <script src="js/trust-bike.js"></script>
+</body>
+</html>

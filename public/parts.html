@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spare Parts | Apex Motors</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+
+  <div class="bg-slate-900 text-gray-300 text-xs py-2 px-4 sm:px-8 flex justify-between items-center border-b border-slate-800">
+    <p class="flex items-center gap-2"><i class="fa-solid fa-shield-halved text-amber-400"></i><span>Independent Procurement & Delivery Service across Nigeria</span></p>
+    <div class="flex gap-4">
+      <a href="tel:+2348027351866" class="hover:text-amber-400"><i class="fa-solid fa-phone mr-1"></i> 0802 735 1866</a>
+      <a href="checkout.html" class="hover:text-amber-400"><i class="fa-solid fa-envelope mr-1"></i> Request Price</a>
+    </div>
+  </div>
+
+  <nav class="bg-white sticky top-0 z-50 shadow-sm border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-4 flex justify-between items-center">
+      <a href="/" class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+        <span class="bg-amber-500 text-slate-900 px-2 py-1 rounded text-lg">APEX</span> MOTORS
+      </a>
+      <div class="hidden md:flex space-x-8 text-sm font-semibold text-gray-700">
+        <a href="vehicles.html" class="hover:text-amber-600">TVS Vehicles</a>
+        <a href="parts.html" class="text-amber-600">Spare Parts</a>
+        <a href="order.html" class="hover:text-amber-600">Track Order</a>
+        <a href="dashboard.html" class="hover:text-amber-600">My Orders</a>
+      </div>
+      <a href="checkout.html" class="bg-slate-900 hover:bg-amber-500 hover:text-slate-900 text-white text-xs uppercase tracking-wider font-bold py-3 px-5 rounded-md transition shadow-md">Order / Inquire</a>
+    </div>
+  </nav>
+
+  <section class="bg-slate-900 text-white py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
+        <div>
+          <span class="text-amber-400 text-xs font-bold uppercase tracking-wider">Direct Spare Procurement</span>
+          <h1 class="text-3xl font-black mt-1">Genuine TVS Factory Parts</h1>
+        </div>
+        <p class="text-gray-400 text-sm max-w-md mt-4 md:mt-0">Avoid fake parts that damage engines. We source factory-approved components for mechanics, fleet operators, and retail riders.</p>
+      </div>
+
+      <div id="cards" class="grid grid-cols-2 md:grid-cols-4 gap-6"></div>
+
+      <div class="mt-12 text-center bg-slate-800 p-8 rounded-xl border border-slate-700 max-w-3xl mx-auto">
+        <h3 class="font-bold text-lg mb-2">Need a Specific Part or Bulk Order?</h3>
+        <p class="text-xs text-gray-300 mb-6">Tell us the exact part name, code, or upload a photo of it during checkout. Our procurement team will match and dispatch it to your state.</p>
+        <a href="checkout.html?kind=parts" class="inline-block bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold uppercase tracking-wider py-3 px-8 rounded-md transition">Request Spare Part Quote</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-slate-950 text-gray-400 py-12 text-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <p>&copy; 2026 Apex Motors Procurement Ltd. All rights reserved.</p>
+      <div class="flex space-x-6">
+        <a href="order.html" class="hover:text-amber-400">Track Order</a>
+        <a href="dashboard.html" class="hover:text-amber-400">My Orders</a>
+        <a href="admin.html" class="hover:text-amber-400">Staff Portal</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="data/products.js"></script>
+  <script>
+    function visual(p) {
+      return `onerror="this.parentNode.innerHTML='<i class=&quot;fa-solid ${p.icon} text-3xl text-amber-400&quot;></i>'" src="${p.img}" alt="${p.name}" class="w-full h-full object-cover">`;
+    }
+    document.getElementById('cards').innerHTML = APEX_PRODUCTS.parts.map(p => `
+      <div class="bg-slate-800/60 rounded-lg border border-slate-700 text-center overflow-hidden">
+        <div class="h-32 bg-slate-700/60 overflow-hidden flex items-center justify-center">
+          <img ${visual(p)}
+        </div>
+        <div class="p-6">
+          <h4 class="font-bold text-sm mb-1">${p.name}</h4>
+          <p class="text-xs text-gray-400 mb-4">${p.note}</p>
+          <a href="checkout.html?kind=parts&id=${p.id}" class="inline-block bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold py-2 px-4 rounded transition">Request Price</a>
+        </div>
+      </div>`).join('');
+  </script>
+  <script src="js/trust-bike.js"></script>
+</body>
+</html>

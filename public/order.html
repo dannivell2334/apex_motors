@@ -1,0 +1,175 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Track Order | Apex Motors</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+
+  <div class="bg-slate-900 text-gray-300 text-xs py-2 px-4 sm:px-8 flex justify-between items-center border-b border-slate-800">
+    <a href="/" class="hover:text-amber-400"><i class="fa-solid fa-arrow-left mr-1"></i> Back to site</a>
+    <a href="dashboard.html" class="hover:text-amber-400">View all my orders</a>
+  </div>
+
+  <nav class="bg-white sticky top-0 z-50 shadow-sm border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-4 flex justify-between items-center">
+      <a href="/" class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+        <span class="bg-amber-500 text-slate-900 px-2 py-1 rounded text-lg">APEX</span> MOTORS
+      </a>
+      <div class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Order Tracking</div>
+    </div>
+  </nav>
+
+  <section class="py-16 max-w-3xl mx-auto px-4 sm:px-8">
+    <form id="lookup" class="bg-white p-6 rounded-xl shadow-md border border-gray-100 mb-8 flex gap-3" onsubmit="return lookupOrder(event)">
+      <input id="refInput" type="text" placeholder="Order reference e.g. APX-M5KX2-A1B2C3" class="flex-1 text-sm p-3 border border-gray-300 rounded-md focus:outline-none focus:border-amber-500">
+      <button class="bg-slate-900 hover:bg-amber-500 hover:text-slate-950 text-white text-xs font-bold px-6 rounded-md transition">Track</button>
+    </form>
+
+    <div id="result" class="hidden">
+      <div class="bg-white rounded-xl shadow-md border border-gray-100 p-6 sm:p-8">
+        <div class="flex justify-between items-start mb-6 flex-wrap gap-2">
+          <div>
+            <p class="text-xs text-gray-500 uppercase tracking-wider">Order Reference</p>
+            <h2 id="rRef" class="text-xl font-black text-slate-900"></h2>
+          </div>
+          <span id="rStatus" class="text-xs font-bold px-3 py-1.5 rounded-full"></span>
+        </div>
+
+        <div class="border-t border-gray-100 pt-5 grid sm:grid-cols-2 gap-4 text-sm mb-6">
+          <div>
+            <p class="text-xs text-gray-500 uppercase mb-1">Item</p>
+            <p id="rItem" class="font-bold text-slate-900"></p>
+          </div>
+          <div>
+            <p class="text-xs text-gray-500 uppercase mb-1">Quantity</p>
+            <p id="rQty" class="font-bold text-slate-900"></p>
+          </div>
+          <div>
+            <p class="text-xs text-gray-500 uppercase mb-1">Total</p>
+            <p id="rTotal" class="font-black text-amber-600"></p>
+          </div>
+          <div>
+            <p class="text-xs text-gray-500 uppercase mb-1">Placed On</p>
+            <p id="rDate" class="font-bold text-slate-900"></p>
+          </div>
+        </div>
+
+        <div id="timeline" class="space-y-3 mb-6"></div>
+
+        <div id="payBox" class="hidden bg-amber-50 border border-amber-200 rounded-md p-4">
+          <p class="text-sm font-bold text-slate-900 mb-2">Payment required to confirm your order</p>
+          <button id="payBtn" onclick="startPayment()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold uppercase tracking-wider py-3 px-6 rounded-md transition">
+            Pay Now
+          </button>
+          <p id="payError" class="hidden text-xs text-red-600 mt-2"></p>
+        </div>
+      </div>
+    </div>
+
+    <div id="notFound" class="hidden bg-white rounded-xl shadow-md border border-red-200 p-6 text-center">
+      <p class="text-sm text-red-600 font-bold">Order not found. Check the reference number and try again.</p>
+    </div>
+  </section>
+
+  <script>
+    const STATUS = {
+      'quote': ['Quote received', 'text-amber-700 bg-amber-100'],
+      'awaiting_payment': ['Payment pending', 'text-orange-700 bg-orange-100'],
+      'paid': ['Payment received', 'text-green-700 bg-green-100'],
+      'dispatched': ['Dispatched', 'text-blue-700 bg-blue-100'],
+      'delivered': ['Delivered', 'text-green-700 bg-green-100'],
+      'cancelled': ['Cancelled', 'text-red-700 bg-red-100']
+    };
+    const ORDER = ['quote', 'awaiting_payment', 'paid', 'dispatched', 'delivered'];
+    let currentOrder = null;
+
+    function showMsg(text, ok) {
+      const m = document.getElementById('msg');
+      if (!m) return;
+      m.className = 'mb-4 text-sm p-4 rounded-md ' + (ok ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700');
+      m.textContent = text;
+    }
+
+    async function load(ref) {
+      const res = await fetch('/api/order/' + ref);
+      if (!res.ok) {
+        document.getElementById('notFound').classList.remove('hidden');
+        document.getElementById('result').classList.add('hidden');
+        return;
+      }
+      const o = await res.json();
+      currentOrder = o;
+      document.getElementById('notFound').classList.add('hidden');
+      document.getElementById('result').classList.remove('hidden');
+      document.getElementById('rRef').textContent = o.ref;
+      document.getElementById('rItem').textContent = o.itemName;
+      document.getElementById('rQty').textContent = o.qty;
+      document.getElementById('rTotal').textContent = o.total;
+      document.getElementById('rDate').textContent = o.createdAt;
+      const [label, cls] = STATUS[o.status] || ['-', 'bg-gray-100 text-gray-600'];
+      const badge = document.getElementById('rStatus');
+      badge.textContent = label;
+      badge.className = 'text-xs font-bold px-3 py-1.5 rounded-full ' + cls;
+
+      document.getElementById('timeline').innerHTML = ORDER.map(s => {
+        const done = ORDER.indexOf(o.status) > ORDER.indexOf(s) || (o.status === s) || s === 'quote';
+        const active = o.status === s;
+        return `<div class="flex items-center gap-3">
+          <span class="w-7 h-7 rounded-full flex items-center justify-center text-xs ${done ? 'bg-green-500 text-white' : active ? 'bg-amber-500 text-white font-bold' : 'bg-gray-200 text-gray-400'}">
+            ${done ? '<i class="fa-solid fa-check"></i>' : active ? ORDER.indexOf(s) + 1 : '<i class="fa-solid fa-check"></i>'}
+          </span>
+          <span class="text-sm ${done ? 'font-bold text-slate-900' : 'text-gray-400'}">${STATUS[s][0]}</span>
+        </div>`;
+      }).join('');
+
+      document.getElementById('payBox').classList.toggle('hidden', !o.canPay);
+    }
+
+    async function lookupOrder(e) {
+      e.preventDefault();
+      const ref = document.getElementById('refInput').value.trim();
+      if (!ref) return false;
+      location.hash = '';
+      history.replaceState(null, '', 'order.html?ref=' + encodeURIComponent(ref));
+      await load(ref);
+      return false;
+    }
+
+    async function startPayment() {
+      const btn = document.getElementById('payBtn');
+      btn.disabled = true;
+      document.getElementById('payError').classList.add('hidden');
+      try {
+        const res = await fetch('/api/order/' + currentOrder.ref + '/pay', { method: 'POST' });
+        const data = await res.json();
+        if (data.authorization_url) window.location.href = data.authorization_url;
+        else throw new Error(data.error || 'Could not start payment');
+      } catch (err) {
+        btn.disabled = false;
+        document.getElementById('payError').textContent = err.message;
+        document.getElementById('payError').classList.remove('hidden');
+      }
+    }
+
+    (async function init() {
+      const ref = new URLSearchParams(location.search).get('ref');
+      if (ref) {
+        document.getElementById('refInput').value = ref;
+        await load(ref);
+        if (window.location.search.includes('ref') && !window.location.hash.includes('ver')) {
+          try {
+            const v = await fetch('/api/order/' + ref + '/verify');
+            const data = await v.json();
+            if (data.status === 'paid') await load(ref);
+          } catch (e) {}
+        }
+      }
+    })();
+  </script>
+  <script src="js/trust-bike.js"></script>
+</body>
+</html>

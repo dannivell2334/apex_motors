@@ -1,0 +1,313 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apex Motors | Independent TVS Motorcycles, Tricycles & Genuine Spare Parts</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    .bg-hero {
+      background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)), url('https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&q=80&w=1600') center/cover no-repeat;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+
+  <!-- TOP BAR -->
+  <div class="bg-slate-900 text-gray-300 text-xs py-2 px-4 sm:px-8 flex justify-between items-center border-b border-slate-800">
+    <p class="flex items-center gap-2">
+      <i class="fa-solid fa-shield-halved text-amber-400"></i>
+      <span>Independent Procurement & Delivery Service across Nigeria</span>
+    </p>
+    <div class="flex gap-4">
+      <a href="tel:+2348027351866" class="hover:text-amber-400 transition"><i class="fa-solid fa-phone mr-1"></i> 0802 735 1866</a>
+      <a href="#order" class="hover:text-amber-400 transition"><i class="fa-solid fa-envelope mr-1"></i> Request Quote</a>
+    </div>
+  </div>
+
+  <!-- NAVIGATION -->
+  <nav class="bg-white sticky top-0 z-50 shadow-sm border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 py-4 flex justify-between items-center">
+      <a href="/" class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+        <span class="bg-amber-500 text-slate-900 px-2 py-1 rounded text-lg">APEX</span> MOTORS
+      </a>
+      <div class="hidden md:flex space-x-8 text-sm font-semibold text-gray-700">
+        <a href="vehicles.html" class="hover:text-amber-600 transition">TVS Vehicles</a>
+        <a href="parts.html" class="hover:text-amber-600 transition">Spare Parts</a>
+        <a href="order.html" class="hover:text-amber-600 transition">Track Order</a>
+        <a href="dashboard.html" class="hover:text-amber-600 transition">My Orders</a>
+      </div>
+      <a href="checkout.html" class="bg-slate-900 hover:bg-amber-500 hover:text-slate-900 text-white text-xs uppercase tracking-wider font-bold py-3 px-5 rounded-md transition shadow-md">
+        Order / Inquire
+      </a>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <header class="bg-hero text-white py-24 px-4 sm:px-8 text-center md:text-left">
+    <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+      <div>
+        <span class="bg-amber-500/20 text-amber-300 text-xs font-bold uppercase tracking-widest py-1 px-3 rounded-full border border-amber-500/30 mb-4 inline-block">
+          Direct Procurement & Fleet Logistics
+        </span>
+        <h1 class="text-4xl sm:text-5xl font-black leading-tight mb-6">
+          Genuine TVS Vehicles & Factory Spare Parts
+        </h1>
+        <p class="text-gray-300 text-base sm:text-lg mb-8 leading-relaxed">
+          We source brand-new TVS motorcycles, commercial tricycles (Keke), and 100% genuine replacement parts directly through verified regional distribution channels for commercial riders, fleet owners, and individuals.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="vehicles.html" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3.5 px-6 rounded-md text-center transition shadow-lg">
+            Browse TVS Models
+          </a>
+          <a href="parts.html" class="bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 font-bold py-3.5 px-6 rounded-md text-center transition">
+            Order Spare Parts
+          </a>
+        </div>
+      </div>
+      
+      <!-- HERO FORM -->
+      <div class="bg-white text-gray-900 p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-100" id="order">
+        <h2 class="text-xl font-bold mb-2 text-slate-900">Request Vehicle or Parts Quote</h2>
+        <p class="text-xs text-gray-500 mb-6">Get verified pricing, delivery estimates, and availability in your state.</p>
+        <form id="quoteForm" class="space-y-4" onsubmit="return submitQuote(event)">
+          <div id="quoteMsg" class="hidden text-sm p-3 rounded-md"></div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Full Name</label>
+            <input id="qName" type="text" placeholder="e.g. Chukwuma Adebayo" required class="w-full text-sm p-3 border border-gray-300 rounded-md focus:outline-none focus:border-amber-500">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Phone Number / WhatsApp</label>
+            <input id="qPhone" type="tel" placeholder="08012345678" required class="w-full text-sm p-3 border border-gray-300 rounded-md focus:outline-none focus:border-amber-500">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Email (for payment receipts)</label>
+            <input id="qEmail" type="email" placeholder="you@example.com" class="w-full text-sm p-3 border border-gray-300 rounded-md focus:outline-none focus:border-amber-500">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Product Interested In</label>
+            <select id="qProduct" class="w-full text-sm p-3 border border-gray-300 rounded-md focus:outline-none focus:border-amber-500 bg-white">
+              <option>TVS King Deluxe Tricycle (Keke)</option>
+              <option>TVS King Kargo Cargo Tricycle</option>
+              <option>TVS HLX 125 Motorcycle</option>
+              <option>TVS HLX 150 / 150F Motorcycle</option>
+              <option>NEO AMI Black Commercial Unit</option>
+              <option>NEO AMI Blue (LPG)</option>
+              <option>TVS Neo NX Motorcycle</option>
+              <option>RockZ 125 Motorcycle</option>
+              <option>Bulk Spare Parts Request</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Delivery State</label>
+            <input id="qState" type="text" placeholder="e.g. Delta State, Lagos, Rivers" class="w-full text-sm p-3 border border-gray-300 rounded-md focus:outline-none focus:border-amber-500">
+          </div>
+          <button type="submit" id="quoteBtn" class="w-full bg-slate-900 hover:bg-amber-500 hover:text-slate-950 text-white font-bold py-3.5 rounded-md transition duration-200">
+            Submit Quote Request
+          </button>
+        </form>
+      </div>
+    </div>
+  </header>
+
+  <!-- VEHICLES CATALOG SECTION -->
+  <section class="py-20 max-w-7xl mx-auto px-4 sm:px-8" id="vehicles">
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <h2 class="text-3xl font-black text-slate-900 mb-4">TVS Commercial Vehicles</h2>
+      <p class="text-gray-600 text-sm sm:text-base">
+        Original brand-new units procured directly through official channels upon order request. Includes original documentation, chassis registration papers, and manufacturer warranty coverage.
+      </p>
+    </div>
+
+    <div id="vehicleCards" class="grid md:grid-cols-3 gap-8"></div>
+    <div class="text-center mt-12">
+      <a href="vehicles.html" class="inline-block bg-slate-900 hover:bg-amber-500 hover:text-slate-950 text-white text-xs uppercase tracking-wider font-bold py-3 px-8 rounded-md transition shadow-md">
+        View Full Vehicle Catalog
+      </a>
+    </div>
+  </section>
+
+  <!-- SPARE PARTS SECTION -->
+  <section class="bg-slate-900 text-white py-20" id="parts">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
+        <div>
+          <span class="text-amber-400 text-xs font-bold uppercase tracking-wider">Direct Spare Procurement</span>
+          <h2 class="text-3xl font-black mt-1">Genuine TVS Factory Parts</h2>
+        </div>
+        <p class="text-gray-400 text-sm max-w-md mt-4 md:mt-0">
+          Avoid fake parts that damage engines. We source factory-approved components for mechanics, fleet operators, and retail riders.
+        </p>
+      </div>
+
+      <div id="partCards" class="grid grid-cols-2 md:grid-cols-4 gap-6"></div>
+
+      <div class="mt-12 text-center bg-slate-800 p-8 rounded-xl border border-slate-700 max-w-3xl mx-auto">
+        <h3 class="font-bold text-lg mb-2">Need a Specific Part or Bulk Order?</h3>
+        <p class="text-xs text-gray-300 mb-6">Send us the part name, code, or photo on WhatsApp and our procurement team will match and dispatch it to your state.</p>
+        <div class="flex flex-wrap justify-center gap-3">
+          <a href="parts.html" class="inline-block bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold uppercase tracking-wider py-3 px-8 rounded-md transition">
+            Request Spare Part Quote
+          </a>
+          <a id="waCta" href="#" target="_blank" rel="noopener" class="inline-block bg-green-600 hover:bg-green-500 text-white text-xs font-bold uppercase tracking-wider py-3 px-8 rounded-md transition">
+            <i class="fa-brands fa-whatsapp mr-1"></i> Send us the parts on WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS (PROCUREMENT MODEL) -->
+  <section class="py-20 max-w-7xl mx-auto px-4 sm:px-8" id="how-it-works">
+    <div class="text-center max-w-2xl mx-auto mb-16">
+      <h2 class="text-3xl font-black text-slate-900 mb-3">How Our Middleman Service Works</h2>
+      <p class="text-gray-600 text-sm">Clear, transparent procurement designed to protect buyer payments and deliver verified TVS assets.</p>
+    </div>
+
+    <div class="grid md:grid-cols-4 gap-8">
+      <div class="text-center">
+        <div class="w-12 h-12 bg-amber-500 text-slate-950 font-black rounded-full flex items-center justify-center mx-auto mb-4 text-lg">1</div>
+        <h4 class="font-bold text-sm mb-2">Request & Quote</h4>
+        <p class="text-xs text-gray-500">You select the vehicle or parts needed and receive an itemized quote including delivery cost.</p>
+      </div>
+      <div class="text-center">
+        <div class="w-12 h-12 bg-amber-500 text-slate-950 font-black rounded-full flex items-center justify-center mx-auto mb-4 text-lg">2</div>
+        <h4 class="font-bold text-sm mb-2">Secure Payment</h4>
+        <p class="text-xs text-gray-500">Pay securely via card, bank transfer, USSD, or QR through our Paystack-secured portal. Payment = contract.</p>
+      </div>
+      <div class="text-center">
+        <div class="w-12 h-12 bg-amber-500 text-slate-950 font-black rounded-full flex items-center justify-center mx-auto mb-4 text-lg">3</div>
+        <h4 class="font-bold text-sm mb-2">Procurement & Verification</h4>
+        <p class="text-xs text-gray-500">We source the unit from verified TVS outlets, inspect chassis/engine docs, and register paperwork in your name.</p>
+      </div>
+      <div class="text-center">
+        <div class="w-12 h-12 bg-amber-500 text-slate-950 font-black rounded-full flex items-center justify-center mx-auto mb-4 text-lg">4</div>
+        <h4 class="font-bold text-sm mb-2">Delivery / Pickup</h4>
+        <p class="text-xs text-gray-500">Your vehicle or spare parts are dispatched to your state or nearest pickup center. Track status online anytime.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEGAL & COMPLIANCE DISCLAIMER FOOTER -->
+  <footer class="bg-slate-950 text-gray-400 py-12 text-xs border-t border-slate-900" id="legal">
+    <div class="max-w-7xl mx-auto px-4 sm:px-8 space-y-6">
+      <div class="p-4 bg-slate-900/80 rounded border border-slate-800 leading-relaxed">
+        <p class="font-bold text-amber-400 mb-1">Legal Disclaimer & Compliance Disclosure:</p>
+        <p>
+          <strong>Apex Motors</strong> operates as an independent automotive procurement service and middleman platform connecting buyers to original TVS vehicles and spare parts in Nigeria. We are not an official franchisee or exclusive distributor of TVS Motor Company or Simba Group unless explicitly stated. All product names, trademarks, logos, and brand names (including "TVS", "TVS King", and "TVS HLX") belong to their respective trademark owners and are used purely for product identification and descriptive purposes under nominative fair use principles.
+        </p>
+      </div>
+
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-4 border-t border-slate-900 pt-6">
+        <p>&copy; 2026 Apex Motors Procurement Ltd. All rights reserved. Registered under CAC Nigeria.</p>
+        <div class="flex space-x-6">
+          <a href="order.html" class="hover:text-amber-400">Track Order</a>
+          <a href="dashboard.html" class="hover:text-amber-400">My Orders</a>
+          <a href="admin.html" class="hover:text-amber-400">Staff Portal</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="data/products.js"></script>
+  <script>
+    function formatNaira(n) {
+      return '\u20A6' + n.toLocaleString('en-NG', { minimumFractionDigits: 0 });
+    }
+
+    function visual(v, iconClass) {
+      return `onerror="this.parentNode.innerHTML='<i class=&quot;fa-solid ${v.icon} ${iconClass}&quot;></i>'" src="${v.img}" alt="${v.name}" class="w-full h-full object-cover">`;
+    }
+
+    document.getElementById('vehicleCards').innerHTML = APEX_PRODUCTS.vehicles.slice(0, 3).map(v => `
+      <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col">
+        <div class="h-48 bg-slate-100 flex items-center justify-center p-4 overflow-hidden">
+          <img ${visual(v, 'text-6xl text-amber-500')}
+        </div>
+        <div class="p-6 flex-1 flex flex-col justify-between">
+          <div>
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-lg font-bold text-slate-900">${v.name}</h3>
+              <span class="text-xs bg-amber-100 text-amber-800 font-bold px-2 py-1 rounded">${v.category}</span>
+            </div>
+            <p class="text-xs text-gray-500 mb-4">${v.tagline}</p>
+            <ul class="text-xs text-gray-600 space-y-2 mb-6">
+              ${v.features.map(f => `<li><i class="fa-solid fa-check text-amber-500 mr-2"></i>${f}</li>`).join('')}
+            </ul>
+          </div>
+          <div>
+            <p class="text-lg font-black text-slate-900 mb-3">${formatNaira(v.price)} <span class="text-xs font-normal text-gray-500">(${v.priceNote})</span></p>
+            <a href="checkout.html?kind=vehicle&id=${v.id}" class="block text-center bg-slate-900 hover:bg-amber-500 hover:text-slate-950 text-white text-xs font-bold py-3 rounded transition">Order This Unit</a>
+          </div>
+        </div>
+      </div>`).join('');
+
+    function visual(v, iconClass) {
+      return `onerror="this.parentNode.innerHTML='<i class=&quot;fa-solid ${v.icon} ${iconClass}&quot;></i>'" src="${v.img}" alt="${v.name}" class="w-full h-full object-cover">`;
+    }
+
+    function partTile(p) {
+      return `<div class="bg-slate-800/60 rounded-lg border border-slate-700 text-center overflow-hidden">
+        <div class="h-24 bg-slate-700/60 overflow-hidden flex items-center justify-center">
+          <img ${visual(p, 'text-3xl text-amber-400')}
+        </div>
+        <div class="p-6">
+          <h4 class="font-bold text-sm mb-1">${p.name}</h4>
+          <p class="text-xs text-gray-400 mb-4">${p.note}</p>
+          <a href="checkout.html?kind=parts&id=${p.id}" class="inline-block bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold py-2 px-4 rounded transition">Order</a>
+        </div>
+      </div>`;
+    }
+
+    document.getElementById('partCards').innerHTML = APEX_PRODUCTS.parts.map(partTile).join('');
+
+    async function submitQuote(e) {
+      e.preventDefault();
+      const msg = document.getElementById('quoteMsg');
+      const btn = document.getElementById('quoteBtn');
+      btn.disabled = true; btn.textContent = 'Submitting...';
+      try {
+        const res = await fetch('/api/quote', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: document.getElementById('qName').value,
+            phone: document.getElementById('qPhone').value,
+            email: document.getElementById('qEmail').value,
+            state: document.getElementById('qState').value,
+            product: document.getElementById('qProduct').value
+          })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          msg.className = 'text-sm p-3 rounded-md bg-green-50 text-green-700 border border-green-200';
+          msg.innerHTML = 'Quote received! Reference: <strong>' + data.ref + '</strong>. We will confirm price & delivery shortly. <a class="underline" href="order.html?ref=' + data.ref + '">Track it here</a>';
+          msg.classList.remove('hidden');
+          document.getElementById('quoteForm').reset();
+          const el = document.getElementById('waCta');
+          if (el && el.href && el.href.indexOf('wa.me') !== -1) {
+            el.href = el.href.replace(/\?text=.*$/, '') + '?text=' + encodeURIComponent('Hello Apex Motors, new quote request ' + data.ref + ' on the site. Product: ' + document.getElementById('qProduct').value + '. Customer: ' + document.getElementById('qName').value + ' (' + document.getElementById('qPhone').value + ').');
+            window.open(el.href, '_blank');
+          }
+        } else {
+          throw new Error(data.error || 'Failed');
+        }
+      } catch (err) {
+        msg.className = 'text-sm p-3 rounded-md bg-red-50 text-red-700 border border-red-200';
+        msg.textContent = err.message;
+        msg.classList.remove('hidden');
+      }
+      btn.disabled = false; btn.textContent = 'Submit Quote Request';
+      return false;
+    }
+  </script>
+  <script>
+    fetch('/api/config').then(r => r.json()).then(c => {
+      const el = document.getElementById('waCta');
+      if (el && c.shopWhatsapp) el.href = 'https://wa.me/' + c.shopWhatsapp + '?text=' + encodeURIComponent('Hello Apex Motors, I need a spare part. Name: ');
+    }).catch(() => {});
+  </script>
+  <script src="js/trust-bike.js"></script>
+</body>
+</html>
