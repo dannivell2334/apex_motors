@@ -112,8 +112,18 @@
     const basePrice = product && kind === 'vehicle' ? product.price : 0;
     const isQuote = kind === 'parts' || basePrice <= 0;
 
-    let SHOP_WHATSAPP = '';
-    fetch('/api/config').then(r => r.json()).then(c => { SHOP_WHATSAPP = c.shopWhatsapp || ''; }).catch(() => {});
+let SHOP_WHATSAPP = '';
+    fetch('/api/config').then(r => r.json()).then(c => {
+      SHOP_WHATSAPP = c.shopWhatsapp || '';
+      if (c.paymentsEnabled === false) {
+        document.getElementById('payBtn').textContent = isQuote ? 'Submit Quote Request' : 'Submit Request (No Payment Now)';
+        if (!isQuote) {
+          const nb = document.getElementById('noteBox');
+          nb.textContent = 'Payments are temporarily disabled. Submit your request and our team will confirm the price and delivery via WhatsApp - no payment is required now.';
+          nb.classList.remove('hidden');
+        }
+      }
+    }).catch(() => {});
 
     function waNotifyUrl(extra) {
       if (!SHOP_WHATSAPP) return '';

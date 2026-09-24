@@ -13,6 +13,7 @@ const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'apex-admin-2026';
 const ADMIN_COOKIE = 'apex_admin_token';
 const ADMIN_TOKEN = crypto.randomBytes(24).toString('hex');
+const PAYMENTS_ENABLED = String(process.env.PAYMENTS_ENABLED || 'true').toLowerCase() !== 'false';
 
 const publicDir = path.join(__dirname, 'public');
 
@@ -43,7 +44,8 @@ app.use(express.static(publicDir));
 app.get('/api/config', (req, res) => {
   res.json({
     shopWhatsapp: process.env.SHOP_WHATSAPP || '',
-    shopPhone: process.env.SHOP_PHONE || ''
+    shopPhone: process.env.SHOP_PHONE || '',
+    paymentsEnabled: PAYMENTS_ENABLED
   });
 });
 
@@ -209,7 +211,7 @@ app.post('/api/orders', async (req, res) => {
 
   let paystackRef = null, authUrl = null, status = 'quote';
 
-  if (totalKobo > 0) {
+  if (totalKobo > 0 && PAYMENTS_ENABLED) {
     const ref = 'APX-' + Date.now().toString(36).toUpperCase() + '-' + crypto.randomBytes(3).toString('hex').toUpperCase();
     const callback = `${req.protocol}://${req.get('host')}/order.html?ref=${ref}`;
     const init = await paystackInit(ref, customer.email, totalKobo, callback);
@@ -248,7 +250,7 @@ app.get('/api/order/:ref', (req, res) => {
     total: naira(order.total_kobo),
     createdAt: order.created_at,
     customer: { name: order.cust_name, phone: order.cust_phone, state: order.cust_state },
-    canPay: !!(order.total_kobo > 0 && (order.status === 'awaiting_payment' || order.status === 'quote'))
+    canPay: PAYMENTS_ENABLED && !!(order.total_kobo > 0 && (order.status === 'awaiting_payment' || order.status === 'quote'))
   });
 });
 
@@ -256,6 +258,7 @@ app.get('/api/order/:ref', (req, res) => {
 app.post('/api/order/:ref/pay', async (req, res) => {
   const order = db.getOrderByRef(req.params.ref);
   if (!order) return res.status(404).json({ error: 'Order not found' });
+  if (!PAYMENTS_ENABLED) return res.status(400).json({ error: 'Payments are temporarily disabled. Contact us and our team will confirm your order manually.' });
   if (!order.total_kobo || order.total_kobo === 0) return res.status(400).json({ error: 'No amount set yet - awaiting quote confirmation' });
   if (['paid', 'dispatched', 'delivered', 'cancelled'].includes(order.status)) {
     return res.status(400).json({ error: 'Order cannot be paid in its current state' });
@@ -355,6 +358,7 @@ app.post('/api/admin/orders/:id/charge', isAdmin, async (req, res) => {
   const { unitPrice, deliveryFee } = req.body || {};
   const order = db.getOrderById(Number(req.params.id));
   if (!order) return res.status(404).json({ error: 'Order not found' });
+  if (!PAYMENTS_ENABLED) return res.status(400).json({ error: 'Payments are temporarily disabled. Confirm the price with the customer manually (e.g. via WhatsApp) and update the order status.' });
 
   const unitKobo = Math.max(0, Math.round(Number(unitPrice || 0) * 100));
   const deliveryKobo = Math.max(0, Math.round(Number(deliveryFee || 0) * 100));
