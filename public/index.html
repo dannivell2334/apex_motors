@@ -218,7 +218,7 @@
     }
 
     function visual(v, iconClass) {
-      return `onerror="this.parentNode.innerHTML='<i class=&quot;fa-solid ${v.icon} ${iconClass}&quot;></i>'" src="${v.img}" alt="${v.name}" class="w-full h-full object-cover">`;
+      return `onerror="this.parentNode.innerHTML='<i class=&quot;fa-solid ${v.icon} ${iconClass}&quot;></i>'" src="${v.img}" alt="${v.name}" class="w-full h-full object-contain">`;
     }
 
     document.getElementById('vehicleCards').innerHTML = APEX_PRODUCTS.vehicles.slice(0, 3).map(v => `
@@ -245,7 +245,7 @@
       </div>`).join('');
 
     function visual(v, iconClass) {
-      return `onerror="this.parentNode.innerHTML='<i class=&quot;fa-solid ${v.icon} ${iconClass}&quot;></i>'" src="${v.img}" alt="${v.name}" class="w-full h-full object-cover">`;
+      return `onerror="this.parentNode.innerHTML='<i class=&quot;fa-solid ${v.icon} ${iconClass}&quot;></i>'" src="${v.img}" alt="${v.name}" class="w-full h-full object-contain">`;
     }
 
     function partTile(p) {

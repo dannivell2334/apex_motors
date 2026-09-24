@@ -55,11 +55,11 @@
   <script>
     function formatNaira(n) { return '\u20A6' + n.toLocaleString('en-NG', { minimumFractionDigits: 0 }); }
     function visual(v) {
-      return `onerror="this.parentNode.innerHTML='<i class=&quot;fa-solid ${v.icon} text-6xl text-amber-500&quot;></i>'" src="${v.img}" alt="${v.name}" class="w-full h-full object-cover">`;
+      return `onerror="this.parentNode.innerHTML='<i class=&quot;fa-solid ${v.icon} text-6xl text-amber-500&quot;></i>'" src="${v.img}" alt="${v.name}" class="w-full h-full object-contain">`;
     }
     document.getElementById('cards').innerHTML = APEX_PRODUCTS.vehicles.map(v => `
-      <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex">
-        <div class="w-1/3 bg-slate-100 flex items-center justify-center p-0 overflow-hidden">
+<div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col sm:flex-row">
+        <div class="sm:w-1/3 bg-slate-100 flex items-center justify-center p-0 overflow-hidden h-48 sm:h-auto">
           <img ${visual(v)}/>
         </div>
         <div class="p-6 flex-1">

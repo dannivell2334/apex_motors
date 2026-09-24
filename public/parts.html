@@ -66,7 +66,7 @@
   <script src="data/products.js"></script>
   <script>
     function visual(p) {
-      return `onerror="this.parentNode.innerHTML='<i class=&quot;fa-solid ${p.icon} text-3xl text-amber-400&quot;></i>'" src="${p.img}" alt="${p.name}" class="w-full h-full object-cover">`;
+      return `onerror="this.parentNode.innerHTML='<i class=&quot;fa-solid ${p.icon} text-3xl text-amber-400&quot;></i>'" src="${p.img}" alt="${p.name}" class="w-full h-full object-contain">`;
     }
     document.getElementById('cards').innerHTML = APEX_PRODUCTS.parts.map(p => `
       <div class="bg-slate-800/60 rounded-lg border border-slate-700 text-center overflow-hidden">
